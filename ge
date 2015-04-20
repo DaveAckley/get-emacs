@@ -1,0 +1,81 @@
+#!/bin/bash
+
+# simple script 'get emacs' that queries a server for screen sessions and either
+# reconnects to one or relaunches screen + emacs 
+
+#    Copyright (C) 2015 Harry Snow
+
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+source config #needed for $username and $primary_server/$secondary_server
+
+hostname=`cat hostname_ge`
+
+screenString=`ssh $hostname screen -ls`
+
+detachString=`echo $screenString | grep Detached`
+
+attachedString=`echo $screenString | grep Attached`
+
+# test if you can connect to primary and secondary server 
+# but only if autologin = true (otherwise it's a pain to do this test)
+if [ "$autologin" == "true" ]; then
+ 	CONNECT_PRIMARY=$(ssh -q $username@$primary_server exit; echo $?)
+	CONNECT_SECONDARY=$(ssh -q $secondary_username@$secondary_server exit; echo $?)
+else
+	CONNECT_PRIMARY=0
+	CONNECT_SECONDARY=0
+fi
+
+
+if [ -n "$attachedString" ]
+then
+	#forcibly detach and reattach the session
+   	echo "$attachedString"
+	ssh -t  $hostname screen -Dr LOBO 
+elif [ -n "$detachString" ] 
+then
+	#reattach
+	echo "$detachString"
+   	ssh -t $hostname screen -r LOBO
+else 
+	if [ "$CONNECT_PRIMARY" == "0" ]; then
+	echo -n $username > hostname_ge
+	echo -n "@" >> hostname_ge
+	remote_server="$username@$primary_server"
+	# create a new screen session somewhere in $primary_server
+     		ssh $remote_server hostname >> hostname_ge
+		hostname=`cat hostname_ge`
+		ssh -t $hostname screen -e ^Z^Z -S LOBO emacs
+		
+
+	# same for secondary server if primary one is down
+	elif [ "$CONNECT_SECONDARY" == "0" && "$CONNECT_PRIMARY" != "0" ]
+	then
+		echo -n $secondary_username > hostname_ge
+		echo -n "@" >> hostname_ge
+		remote_server="$secondary_username@$secondary_server"
+		ssh $remote_server hostname >> hostname_ge
+		hostname=`cat hostname_ge`
+		ssh -t $hostname screen -e ^Z^Z -S LOBO emacs
+ 
+	else
+		echo "can't connect to primary or secondary servers"
+	fi
+	# TODO: if one server is unreachable, but the session is still active/locked
+	# deal with desktop-save-mode effectively.
+
+	# TODO: make it work with XWindows version of emacs
+fi
+

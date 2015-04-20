@@ -1,0 +1,64 @@
+How to install GE
+
+QUICKSTART
+----------
+
+ge is meant to be easy to configure.  Unpack it in your home directory.
+
+Edit the file "config" in the ge-1.0 directory, and provide it
+with your username as explained/required in that file under "MANDATORY"
+
+Then type 
+
+./configure
+
+Then you are ready to launch ge by typing,
+
+./ge
+
+ADDITIONAL NOTES
+----------------
+
+Reconfiguration
+
+There are several reasons to reconfigure: you've changed servers which host
+your screen + emacs sessions,
+you've updated ge, or you want to change some other configuration options.
+
+ge mostly lives in its own directory, so to get rid of it, you can delete
+the directory it lives in.  Note that you will probably want to save the 
+file 'config' which specifies your options that you set, and 'hostname_ge'
+which tells you where you left your screen+emacs session.
+
+The configuration process makes changes to your .emacs files by requiring
+certain additional emacs init files to be loaded (from the configuration directory),
+so you will need to comment those references out.  It adds the code in the
+ge emacs.d directory to your .emacs.d directory.
+It also adds a file .bash_history_emacs to your home directory, 
+which you may want or may not want to delete. 
+
+In version 2.0, there will be an uninstall script for version 1.0,
+which automatically takes care of cleaning up the first installation for you.
+
+In the case you are updating or reinstalling, you will probably want to save
+and/or copy over your 'config' and 'hostname_ge' files.  Your autosaved workgroup/desktop
+files will persist in your .emacs.d directory under 'desktop' and 'workgroups'.
+
+In addition, you should also reconfigure if you are installing ge on multiple
+computers if they have separate home directories from the central servers you SSH into
+so that you will be able to log into your remote computers from
+that computer.
+
+
+LIMITATIONS
+-----------
+
+ge currently assumes that the server you will be running screen + emacs on
+also has some network storage that persists and is accessible even if the
+particular server you will be connecting to is down, or has been rebooted.
+
+For example, moons.cs.unm.edu is backed by a person's NFS share and connects
+to one of the many moons/machines.
+
+In future releases (version 2.0 next week), this limitation will be removed
+using rsync to store a local copy on a machine of your choosing.

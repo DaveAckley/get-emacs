@@ -1,0 +1,135 @@
+ge -- Get Emacs.  
+
+Version 1.0
+
+"We are born, we run ge, and then we live in screen + emacs our entire life,
+ until we finally detach for the last time" 
+
+--Harry Snow after a quotation by Dave Ackley
+
+GENERAL DESCRIPTION
+-------------------
+
+ge stands for get emacs.  ge is a simple command line script that lives in
+your home directory or a directory of your choosing and either starts a 
+screen + emacs session for you, reattaches to an existing screen + emacs
+session where you last left it, or if that session has ended for any reason,
+restarts it either on the same server or server group, or on another server 
+or server group.  While it will save buffers, search and command histories,
+variables, frames, and windows, there may be parts of your session that don't 
+persist after your screen + emacs session goes down.  This is especially true 
+of special buffers.   ge builds on existing tools including the native emacs
+session saving capabilities and is designed to run on emacs 23 or later. 
+As these tools mature, ge should be able to save more aspects of your sessions. 
+
+The motivation for this script was to provide an optimum mix of currently 
+available emacs packages for saving, managing and persisting your sessions,
+and to avoid the situation where you and everyone else has to spend hours
+configuring and testing various config files just to have this functionality.
+On top of this, it provides two letter UNIX-style command access to your 
+screen + emacs session, and has the ultimate goal when it is fully realized
+of allowing  you to live in your screen + emacs session for a long as you want.
+
+GENERAL NOTES
+-------------
+
+The INSTALL file contains instructions on how to install ge.  
+Before installing, you will need to supply your username in the 
+file named "config" in this directory.
+
+Installation should put all the files you will need to use ge in the
+correct place on your computer or server.  
+
+ge is currently configured to work best when it is downloaded to your NFS
+share on a UNM CS Department computer, unziped in your home folder, and used
+from there.  It is also designed to run on a Linux/BSD computer you might have.
+Full support for running it on arbitrary Linux computers connected to arbitrary
+servers will be released in version 2.0 next week.
+
+The emacs.d directory contains the files that will be loaded when emacs starts.
+
+The configuration directory contains configuration files that you don't need to
+edit.  
+
+USAGE
+-----
+
+Usage is fairly simple.  Basic usage involves typing ge to create or connect to 
+a session , and then C-z d when you are done to disconnect from the session.  
+
+Advanced usage takes full advantage of the session managers included with ge,
+and is described below.
+
+BASIC USAGE
+
+You type 'ge' in the location where it's installed and it will either start 
+a new session on the server you have chosen, it will resume an existing 
+session on that server, or it will restart a session on that server or an 
+alternate server.
+
+When you are done with your session and want to disconnect you type 
+
+C-z d   
+
+to disconnect.  When you type ge again, ge reattaches to this session if it still 
+exists or recreates as much of it as possible if it doesn't.
+
+ADVANCED USAGE
+
+In addition, you can use all of the session management features of 
+workgroups2:
+
+Workgroups are an arrangement of windows, frames and buffers that
+you wish to preserve in that configuration.  Workgroups allow you to have
+separate configurations for separate editing tasks.
+
+workgroups2 commands are all prefixed with C-c z
+
+(C-c z) c              to create a workgroup
+(C-c z) C-s            to save your session
+(C-c z) C-f            to load another session
+(C-c z) A              to rename a workgroup
+(C-c z) k              to kill a workgroup
+(C-c z) v              to switch to a workgroup
+
+workgroups2 was chosen for its potential ultimately to save special buffers.
+If anyone wants to contribute code to save special buffers that you may use
+(such as emacs tetris?), workgroups2 code is hosted at:
+https://github.com/pashinin/workgroups2/tree/master
+
+
+AUTHOR
+------
+
+ge was written and packaged by Harry Snow (harrys@cs.unm.edu) for
+Dave Ackley's CS591 course.  It includes code, binaries and config linked
+to from the Emacs Wiki and from around the internet including 
+Sergey Pashinin's workgroups2.
+
+
+ACKNOWLEDMENTS
+--------------
+
+My classmates in UNM's CS 591, Spring 2015 made a number of valuable suggestions
+and comments.
+
+Dave Ackley, our teacher, suggested/requested a separate history for 
+bash shell commands for shells opened within emacs.
+
+
+
+BUG REPORTS AND COMMENTS
+------------------------
+
+Please send bug reports and comments to harrys@cs.unm.edu
+Please also take the ge SurveyMonkey user survey:
+
+https://www.surveymonkey.com/s/KVLYV6T
+
+
+LICENSE
+-------
+
+ge is released under a GPLv3 license, and further subject to the licenses 
+of its various components.  See the file COPYING in this directory.
+# get-emacs

@@ -1,0 +1,4 @@
+(setenv "HISTFILE" ".bash_history_emacs")
+(shell-command "shopt -s histappend")
+(setenv "HISTCONTROL" "ignore-dups")
+(setenv "PROMPT_COMMAND" "history -a; history -c; history -r")

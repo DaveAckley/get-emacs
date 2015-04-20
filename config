@@ -1,0 +1,88 @@
+# This file contains the configuration options for ge
+# Mandatory items must be set.  The main mandatory option is "username"
+# ge will not work without you specifying your ssh server username
+
+# The rest of the items are optional and are explained below.
+
+
+#  MANDATORY: You must specify your usernames here.  myusername is there only
+#  as an example, and will not work for you (unless your username on the server
+#  you will log into is coincidentally 'myusername'). Instead of "myusername"
+#  please write the username that you will use to log in to the primary server below.
+#  For example:  username="hsnow"
+
+#  secondary_username is the username you will use to log into the secondary server
+#  specified below.  If the usernames are the same then enter your username twice.
+
+username="username"   
+secondary_username="username"
+
+#  ge currently expects that the server you connect to is connected to an
+#  NFS or network share where your files will live including .emacs, autosave
+#  files, files you will edit in emacs, .bash_history etc.  This is the 
+#  case for example on the UNM CS machines.  If you are installing in your
+#  home folder in such a directory, then you should leave this next variable
+#  as the default.  If you are installing on your Linux/UNIX computer somewhere else
+#  or a linux/UNIX computer from which you have to ssh to the server to get
+#  to your network share, then change the following variable to false.
+#  (Default: true)
+
+install_on_remote_server=true
+
+# OPTIONS
+
+#  The following options are not necessary to change if you plan to use ge
+#  on the UNM CS servers.  However, you may wish
+#  to change them in order to tailor ge to your liking or use alternate servers.
+
+#  Name of primary server that you will have your screen + emacs session on
+#  The default is moons.cs.unm.edu
+
+primary_server="moons.cs.unm.edu"
+
+#  Name of secondary server that you will use if the primary server is down
+#  or unreachable.  The default is trucks.cs.unm.edu
+
+secondary_server="trucks.cs.unm.edu"
+
+
+#  PACKAGE OPTIONS
+
+#  a.) Separate bash history for emacs.  
+
+#  If you want a separate bash history (different from global bash history) for
+#  shells opened within emacs this should be set to true, or if you want
+#  your entire shell history in emacs, this should be set to false.  The
+#  default is true.
+
+separate_bash_history=true
+
+#  b.) Additional saved variables
+
+#  By default ge will save the following emacs variables for you:
+#  search-ring, regexp-search-ring, kill-ring, compile-history, 
+#  query-replace-defaults, and compile-command.
+#  if you want additional variables saved so that if screen + emacs is lost
+#  due to reboot, crash etc. the session will resume having preseved them,
+#  please include them here as a space separated list.
+#  For example, additional_saved_vars="foo bar gah"
+#  where foo, bar and gah are emacs variables.  After installing ge
+#  you can also add them directly to your .emacs file under
+#  (setq savehist-additional-variables ...
+
+additional_saved_vars=""
+
+#  c.) Option not to login automatically using SSH certificates
+
+#  As a convenience, this script sets up automatic login without a password
+#  using SSH certificates.   This means that you won't have to enter your 
+#  password every time you access your screen + emacs session
+#  on a remote server.  To turn this feature off, set the following
+#  variable to false (default: true)
+
+autologin=true
+
+#  This is false until you copy over your authorization key
+
+already_installed_key=false
+

@@ -1,0 +1,98 @@
+#!/bin/bash
+
+#  This is the configuration script for configuring ge initially, or when you
+#  want to make changes to the overall configuration options. 
+#  This script places ge in your path (making a small change to PATH in .profile)
+#  and makes changes to .emacs. Otherwise, ge is self-contained in its folder.
+
+#    Copyright (C) 2015 Harry Snow
+
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+. $(pwd)/config
+
+#  First item of business, make sure you can log into the remote machines
+#  without a password unless autologin=false
+
+
+if [ "$autologin" = "true" ]; then
+   if [ ! -e ~/.ssh/id_rsa ]; then
+   	ssh-keygen -f ~/.ssh/id_rsa -b 2048
+   fi
+	
+   if [ "$already_installed_key" = "false" ]; then
+	
+   	echo "setting automatic login for primary server"
+   	ssh-copy-id $username@$primary_server
+ 
+   	#copy to secondary server as well	
+   	echo "setting automatic login for secondary server"
+   	ssh-copy-id $secondary_username@$secondary_server
+	echo "already_installed_key=\"true\"" >> $(pwd)/config
+   fi
+      
+fi
+
+#   Make the emacs init file contain additional_save_vars
+
+#  add additional variables to save to the emacs_init file
+echo "..adding additional variable to emacs init file"
+if [ -n "$additional_saved_vars" ]; then
+   sed -i "s/defaults/defaults $additional_saved_vars/" configuration/emacs_init
+fi
+
+
+#  The third item of business: copy over files if necessary
+#  and run 'installge' script which does most of the installation
+#  with respect to emacs
+
+if [ "$install_on_remote_server" = "false" ]; then
+     
+     # we're in the situation of a linux user who wants to ssh in from somewhere else
+     # outside of the server with the NFS share backing home directory
+     # so copy files to the remote server
+     ssh $username@$primary_server "mkdir -p ge-1.0; chmod 755 ge-1.0"
+     empty_ge=$(ssh $username@$primary_server ls -A \~/ge-1.0)
+     if [ -z "$empty_ge" ]; then
+	echo "..copying over the ge-1.0 directory to the primary remote server"
+        scp -r -q . $username@$primary_server:~/ge-1.0
+        echo "..configuring emacs on the primary server"
+        ssh $username@$primary_server 'sh $(pwd)/ge-1.0/configuration/installge'
+     fi
+
+     ssh $secondary_username@$secondary_server mkdir -p ge-1.0
+     empty_ge2=$(ssh $secondary_username@$secondary_server ls -A \~/ge-1.0)
+     if [ -z "$empty_ge2" ]; then
+     	echo ".. copying over the ge-1.0 directory to the secondary remote server"
+     	scp -r -q . $secondary_username@$secondary_server:~/ge-1.0
+     	echo ".. configuring emacs on the secondary server"
+     	ssh $secondary_username@$secondary_server 'sh $(pwd)/ge-1.0/configuration/installge'
+     fi
+else 
+     # just run installge from this directory
+     echo "..configuring emacs"
+     sh configuration/installge
+fi
+
+#  Finally,  put the ge directory into PATH, so we can run ge from the
+#  commandline
+
+echo "..adding ge to your path"
+pathstring="PATH=$PATH:"$(pwd) 
+touch ~/.profile
+echo $pathstring >> ~/.profile
+PATH=$PATH:$(pwd)  #adds it for this session too
+
+
+

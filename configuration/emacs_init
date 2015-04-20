@@ -1,0 +1,55 @@
+;; load packages from .emacs.d
+(add-to-list 'load-path "~/.emacs.d/sitelisp/")
+(add-to-list 'load-path "~/.emacs.d/workgroups2/src")
+(add-to-list 'load-path "~/.emacs.d/cl-lib/")
+(add-to-list 'load-path "~/.emacs.d/workgroups2/deps")
+(require 'cl-lib) ;;required for workgroups2
+
+;; use 'real-auto-save' 
+    (require 'real-auto-save)
+     (add-hook 'text-mode-hook 'turn-on-real-auto-save)
+     (add-hook 'muse-mode-hook 'turn-on-real-auto-save)
+
+;; specifies the path and defaults for desktop-save-mode
+;; modified slightly from stackoverflow:
+;; http://stackoverflow.com/questions/4477376/some-emacs-desktop-save-questions-how-to-change-it-to-save-in-emacs-d-emacs
+
+(setq desktop-dirname             "~/.emacs.d/desktop/")  ;;used below in setting desktop-path
+(setq desktop-base-file-name      "emacs.desktop")
+(setq desktop-path                (list desktop-dirname))
+
+;; turns on desktop-save mode so emacs is resumed where you left off less or more
+(desktop-save-mode 1)
+(setq desktop-auto-save-timeout '60) ;; save every min and on exit
+
+;; save-hist saves mini-buffer history and other variables
+(setq savehist-additional-variables
+ '(search-ring regexp-search-ring kill-ring compile-history query-replace-defaults) ;; can add more variables to this
+ savehist-file "~/.emacs.d/savehist") 
+(savehist-mode 1)
+(setq savehist-autosave-interval '30)  ;; save every 30 seconds
+
+;;restore frames  (TODO: don't turn this on if emacs version is 24.4)
+(require 'frame-restore)
+(setq frame-restore-mode 1)
+
+;; save place saves the place in every file that you were in when last visited
+(require 'saveplace)
+(setq-default save-place t)
+(setq save-place-file "~/.emacs.d/saved-places")
+
+;;trying out workgroups2 for restoring special buffers
+;;(https://github.com/pashinin/workgroups2)
+(require 'workgroups2)
+(setq wg-session-file "~/.emacs.d/workgroups/emacs_workgroups")
+(setq wg-emacs-exit-save-behavior           'save)      
+(setq wg-workgroups-mode-exit-save-behavior 'save) 
+
+;; keep old versions of files (taken from http://www.srid.ca/emacs/#sec-3-2)
+(setq delete-old-versions -1)  ;;emacs never deletes old versions
+(setq backup-by-copying t)  ;; doesn't clobber symlinks
+(setq version-control t)  ;; version numbers on backups
+(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))   ;;put autosaves and backups in this directory
+
+;; also part of workgroups2 
+(workgroups-mode 1)  

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# TODO: add script that automatically gets the info that
+# the user wants to put into the 'config' file.  Uses previous
+# defaults if any.
+
+sh configuration/configure
