@@ -1,14 +1,17 @@
 #!/bin/bash
 
 #  This script installs ge related emacs init code
+dir=$(pwd)		       #full path of directory containing ge
+parent_dir=`dirname $(pwd)`/   #parent dirpath of directory containing ge
+this_dir=${dir#"$parent_dir"}  #name of the directory containing ge
 
-#source $(pwd)/ge-1.0/config  #needed for separate_bash_history
+. $dir/config  #needed for separate_bash_history
 
 #  load the emacs_init file from your personal .emacs
 #  1.) Check if there already is a .emacs file, and 2.) load the ge
 #  emacs_init code from it
 
-loadstring="(load \"$(pwd)/ge-1.0/configuration/emacs_init\")" 
+loadstring="(load \"$(pwd)/configuration/emacs_init\")" 
 
 if [ -e ~/.emacs ]; then
    echo $loadstring >> ~/.emacs
@@ -19,18 +22,18 @@ fi
 
 # add setenv code to emacs in case separate_bash_history is true
 
-loadsephistcode="(load \"$(pwd)/ge-1.0/configuration/emacs_sep_hist\")"   
+loadsephistcode="(load \"$(pwd)/configuration/emacs_sep_hist\")"   
 
 if [ "$separate_bash_history" = "true" ]; then
    	     echo $loadsephistcode >> ~/.emacs
-	     mv bash_history_emacs ~/.bash_history_emacs
+	     cp configuration/bash_history_emacs ~/.bash_history_emacs
 fi
 
 # copy over emacs.d folder to .emacs.d
 if [ "$install_on_remote_server" = "false" ]; then
-	cp -R  $(pwd)/ge-1.0/emacs.d/ ~/.emacs.d
+	cp -R  $dir/$this_dir/emacs.d/ ~/.emacs.d
 else
-	cp -R $(pwd)/emacs.d/ ~/.emacs.d
+	cp -R $dir/emacs.d/ ~/.emacs.d
 fi
 touch ~/.emacs.d/savehist #savehist file is here
 touch ~/.emacs.d/saved-places #file that contains list of places in buffers
